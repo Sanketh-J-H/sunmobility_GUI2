@@ -54,14 +54,6 @@ def generate_numbers():
             
             # Clear existing items in the tree
             root.tree.delete(*root.tree.get_children())
-
-            # # Update "Signal_Name" and "Signal" columns with new data
-            # for key, value in data_dict.items():
-            #     for child_id in children_ids:
-            #         item_values = root.tree.item(child_id, "values")
-            #         if item_values[2] == key:  # Match "Signal_Name" with dictionary key
-            #             item_values = (item_values[0], item_values[1], key, value)
-            #             root.tree.item(child_id, values=item_values)
             
             # Insert new items into the tree
             for key, value in data_dict.items():
@@ -74,7 +66,13 @@ def generate_numbers():
 root = tk.Tk()
 root.title("SunMobility")
 
-root.attributes('-fullscreen',True)
+# root.attributes('-fullscreen',True)
+# Get screen width and height
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+# Set window geometry to fill the screen
+root.geometry(f"{screen_width}x{screen_height}+0+0")
 
 tree_frame = tk.Frame(root)
 tree_frame.grid(row=2, column=3, rowspan=3, padx=100, pady=10, sticky="nsew")
