@@ -2,22 +2,13 @@ import socket
 import os
 import threading
 
-# B2T_BMS1 = {}
-# keys = [
-#     "B2T_BMS1_Message_sum",
-#     "B2T_TMax",
-#     "B2T_Tmin",
-#     "B2T_ScBatU_H",
-#     "B2T_ScBatU_L",
-#     "B2T_Mode",
-#     "B2T_TMSWorkMode",
-#     "B2T_BMUWorkMode",
-#     "B2T_HighVCtrl",
-#     "B2T_TargetT",
-#     "B2T_TAvg",
-#     "B2T_Life"
-# ]
-
+# Define variables and their start bits and lengths
+B2V_BMSValue3 = {
+    "B2V_Totall": (0, 16),
+    "B2V_HVB": (16, 16),
+    "B2V_HVP": (32, 16),
+    "B2V_SOC": (48, 16)
+}
 # Define variables and their start bits and lengths
 B2T_BMS1 = {
     "B2T_TMax": (0, 8),
@@ -103,7 +94,8 @@ class B2TServer:
             print(received_data)
 
             # Check if the received data starts with the desired prefix
-            if str(received_data[2:]).startswith('18ff45f3'): # Extract the relevant portion of the received data (after the prefix)
+            # Extract the relevant portion of the received data (after the prefix)
+            if str(received_data[2:]).startswith('18ff45f3'):
                 # Mask out all but the last 64 bits
                 trimmed_data = int(received_data, 16) & 0xffffffffffffffff
                 # Convert hex data to binary string
@@ -113,18 +105,64 @@ class B2TServer:
                 for var, (start_bit, length) in B2T_BMS1.items():
                     end_bit = start_bit + length
                     value = int(binary_data[start_bit:end_bit], 2)
+
+                    if var == "B2T_TMax":
+                        decrypted_data[var] = (value - 40)
+                    if var == "B2T_TMin":
+                        decrypted_data[var] = (value - 40)
+                    if var == "B2T_TargetT":
+                        decrypted_data[var] = (value - 40)
+                    if var == "B2T_TAvg":
+                        decrypted_data[var] = (value - 40)
+                    if var == "B2T_ScBatU_H":
+                        decrypted_data[var] = value * 0.1
+                    if var == "B2T_ScBatU_L":
+                        decrypted_data[var] = value * 0.1
+
                     decrypted_data[var] = value
+
                 print(decrypted_data)
 
                 # Define the output string
                 output_string = f' {decrypted_data}'
-    
+
                 # Specify the file path
-                file_path = "CANT_Test.log"
-    
+                file_path = "B2T_BMS_DICT"
+
                 # Write the output string to the file
                 with open(file_path, "w") as file:
                     file.write(output_string)
+                    file.close()
+
+            # Extract the relevant portion of the received data (after the prefix)
+            if str(received_data[2:]).startswith('1822a1f3'):
+                # Mask out all but the last 64 bits
+                trimmed_data = int(received_data, 16) & 0xffffffffffffffff
+                # Convert hex data to binary string
+                binary_data = bin(trimmed_data)[2:].zfill(64)
+                # Decrypt hex data into separate variables
+                decrypted_data = {}
+                for var, (start_bit, length) in B2V_BMSValue3.items():
+                    end_bit = start_bit + length
+                    value = int(binary_data[start_bit:end_bit], 2)
+
+                    if var == "B2V_Totall":
+                        decrypted_data[var] = (value - 3200)*0.1
+
+                    decrypted_data[var] = value*0.1
+
+                print(decrypted_data)
+
+                # Define the output string
+                output_string = f' {decrypted_data}'
+
+                # Specify the file path
+                file_path = "B2V_BMSValue3_DICT"
+
+                # Write the output string to the file
+                with open(file_path, "w") as file:
+                    file.write(output_string)
+                    file.close()
 
     def stop_server(self):
         self.server_socket.close()
