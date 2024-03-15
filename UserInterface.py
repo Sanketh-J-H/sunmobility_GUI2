@@ -78,7 +78,7 @@ tree_frame = tk.Frame(root)
 tree_frame.grid(row=2, column=3, rowspan=3, padx=100, pady=10, sticky="nsew")
 
 columns = ("Function", "Msg_Name", "Signal_Name", "Signal")
-root.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="none",height=len(formatted_data))
+root.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="none",height=len(formatted_data)
 
 for col in columns:
     root.tree.heading(col, text=col)
