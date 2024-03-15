@@ -111,7 +111,6 @@ for item in data:
 # Update the window geometry to accommodate the resized tree_frame
 root.geometry(f"{screen_width}x{screen_height}+0+0")
 
-
 Grid.rowconfigure(root,0,weight=1)
 Grid.columnconfigure(root,0,weight=0)        
 Grid.rowconfigure(root,1,weight=1)
