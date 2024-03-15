@@ -47,7 +47,7 @@ def generate_numbers():
             
             # Clear existing items in the tree
             root.tree.delete(*root.tree.get_children())
-            
+            root.tree.insert("", "end", values=("Thermal Management 1","B2T_BMS1"))
             # Insert new items into the tree
             for key, value in data_dict.items():
                 root.tree.insert("", "end", values=("", "", key, value))
@@ -71,7 +71,7 @@ tree_frame = tk.Frame(root)
 tree_frame.grid(row=2, column=3, rowspan=3, padx=100, pady=10, sticky="nsew")
 
 columns = ("Function", "Msg_Name", "Signal_Name", "Signal")
-root.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="none",height=len(formatted_data))
+root.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="none",height=len(formatted_data) + 1)
 
 for col in columns:
     root.tree.heading(col, text=col)
@@ -96,12 +96,6 @@ data = [
     ]
 
 tree_items = []  # List to keep references to tree items
-
-# # Calculate the total height required for displaying all rows
-# total_height = len(data) * 20  # Assuming each row height is 20 pixels
-
-# # Set the height of the tree_frame to accommodate the calculated total height
-# tree_frame.configure(height=total_height)
 
 # Now, update the existing data insertion loop to insert the actual data
 for item in data:

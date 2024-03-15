@@ -74,12 +74,12 @@ class B2TServer:
                 f"Error: Failed to connect to WiFi network {self.network_BSSID}")
 
     def disconnect_from_wifi(self):
-        command = f"nmcli device disconnect wlp4s0"
+        command = f"nmcli device disconnect wlo1"
         exit_code = os.system(command)
         if exit_code == 0:
-            print(f"Device 'wlp4s0' successfully disconnected.")
+            print(f"Device 'wlo1' successfully disconnected.")
         else:
-            print(f"Error: Failed to disconnect from Device 'wlp4s0'.")
+            print(f"Error: Failed to disconnect from Device 'wlo1'.")
 
     def receive_data_from_socket(self):
         data, _ = self.server_socket.recvfrom(13)
@@ -103,17 +103,11 @@ class B2TServer:
             print(received_data)
 
             # Check if the received data starts with the desired prefix
-            if str(received_data[2:]).startswith('18ff45f3'):
-                # Extract the relevant portion of the received data (after the prefix)
+            if str(received_data[2:]).startswith('18ff45f3'): # Extract the relevant portion of the received data (after the prefix)
                 # Mask out all but the last 64 bits
                 trimmed_data = int(received_data, 16) & 0xffffffffffffffff
-                # trimmed_data = hex(trimmed_data)
                 # Convert hex data to binary string
                 binary_data = bin(trimmed_data)[2:].zfill(64)
-                # # Assign the extracted data to the corresponding key in the dictionary
-                # B2T_BMS1[keys[self.index]] = trimmed_data
-                # # Increment the index for the next key
-                # self.index = (self.index + 1) % len(keys)
                 # Decrypt hex data into separate variables
                 decrypted_data = {}
                 for var, (start_bit, length) in B2T_BMS1.items():
