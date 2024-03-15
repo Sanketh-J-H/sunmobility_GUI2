@@ -78,7 +78,7 @@ tree_frame = tk.Frame(root)
 tree_frame.grid(row=2, column=3, rowspan=3, padx=100, pady=10, sticky="nsew")
 
 columns = ("Function", "Msg_Name", "Signal_Name", "Signal")
-root.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="none")
+root.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="none",height=len(formatted_data))
 
 for col in columns:
     root.tree.heading(col, text=col)
@@ -104,11 +104,20 @@ data = [
 
 tree_items = []  # List to keep references to tree items
 
+# # Calculate the total height required for displaying all rows
+# total_height = len(data) * 20  # Assuming each row height is 20 pixels
+
+# # Set the height of the tree_frame to accommodate the calculated total height
+# tree_frame.configure(height=total_height)
+
+# Now, update the existing data insertion loop to insert the actual data
 for item in data:
     tree_item = root.tree.insert("", "end", values=(item["Function"], item["Msg_Name"], item["Signal_Name"], item["Signal"]))
     tree_items.append(tree_item)
 
-root.tree.pack()
+# Update the window geometry to accommodate the resized tree_frame
+root.geometry(f"{screen_width}x{screen_height}+0+0")
+
 
 Grid.rowconfigure(root,0,weight=1)
 Grid.columnconfigure(root,0,weight=0)        
@@ -119,6 +128,10 @@ Grid.rowconfigure(root,4,weight=1)
 Grid.rowconfigure(root,5,weight=1)
 Grid.rowconfigure(root,6,weight=1)
 Grid.rowconfigure(root,7,weight=1)
+Grid.rowconfigure(root,8,weight=1)
+
+root.tree.pack()
+
 
 # HOME
 button0 = tk.Button(root, text="HOME", command=generate_numbers)
