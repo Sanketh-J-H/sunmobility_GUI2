@@ -44,13 +44,6 @@ def generate_numbers():
                 print(f"Error parsing file content: {e}")
                 continue
             
-            # Get the IDs of all children items
-            children_ids = root.tree.get_children()
-            for child_id in children_ids:
-                item_values = root.tree.item(child_id, "values")
-                # Clear the "Signal_Name" and "Signal" columns while preserving "Function" and "Msg_Name"
-                item_values = (item_values[0], item_values[1], "", "")
-                root.tree.item(child_id, values=item_values)
             
             # Clear existing items in the tree
             root.tree.delete(*root.tree.get_children())
@@ -78,7 +71,7 @@ tree_frame = tk.Frame(root)
 tree_frame.grid(row=2, column=3, rowspan=3, padx=100, pady=10, sticky="nsew")
 
 columns = ("Function", "Msg_Name", "Signal_Name", "Signal")
-root.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="none",height=len(formatted_data)
+root.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", selectmode="none",height=len(formatted_data))
 
 for col in columns:
     root.tree.heading(col, text=col)
