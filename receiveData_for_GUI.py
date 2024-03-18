@@ -108,18 +108,18 @@ class B2TServer:
 
                     if var == "B2T_TMax":
                         decrypted_data[var] = (value - 40)
-                    if var == "B2T_TMin":
+                    elif var == "B2T_Tmin":
                         decrypted_data[var] = (value - 40)
-                    if var == "B2T_TargetT":
+                    elif var == "B2T_TargetT":
                         decrypted_data[var] = (value - 40)
-                    if var == "B2T_TAvg":
+                    elif var == "B2T_TAvg":
                         decrypted_data[var] = (value - 40)
-                    if var == "B2T_ScBatU_H":
+                    elif var == "B2T_ScBatU_H":
                         decrypted_data[var] = value * 0.1
-                    if var == "B2T_ScBatU_L":
+                    elif var == "B2T_ScBatU_L":
                         decrypted_data[var] = value * 0.1
-
-                    decrypted_data[var] = value
+                    else:
+                        decrypted_data[var] = value
 
                 print(decrypted_data)
 
@@ -141,15 +141,16 @@ class B2TServer:
                 # Convert hex data to binary string
                 binary_data = bin(trimmed_data)[2:].zfill(64)
                 # Decrypt hex data into separate variables
-                decrypted_data = {}
+                decrypted_data = {} 
                 for var, (start_bit, length) in B2V_BMSValue3.items():
                     end_bit = start_bit + length
-                    value = int(binary_data[start_bit:end_bit], 2)
+                    temp = binary_data[end_bit-8:end_bit] + binary_data[start_bit:end_bit-8]
+                    value = int(temp, 2)
 
                     if var == "B2V_Totall":
-                        decrypted_data[var] = (value - 3200)*0.1
-
-                    decrypted_data[var] = value*0.1
+                        decrypted_data[var] = (value - 32000)*0.1
+                    else:
+                        decrypted_data[var] = value*0.1
 
                 print(decrypted_data)
 
