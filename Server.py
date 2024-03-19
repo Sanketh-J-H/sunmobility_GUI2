@@ -8,10 +8,10 @@ def server():
         with conn:
             print('Connected by', addr)
             while True:
-                data = conn.recv(14)
+                data ,_ = conn.recvfrom(1024)
                 if not data:
                     break
-                print('Received:', data)
+                print(data)
                 # Process received data here
                 # For demonstration, let's send the same data back
                 # conn.sendall(data)
