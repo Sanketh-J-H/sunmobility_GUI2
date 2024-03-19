@@ -62,6 +62,8 @@ class B2TServer:
             print(f"Error: Failed to disconnect from Device 'wlo1'.")
 
     def receive_data_from_socket(self):
+        self.server_socket.listen()
+        conn, addr = self.server_socket.accept()
         data, _ = self.server_socket.recvfrom(13)
         hex_data = data.hex()  # Convert received data to Hexadecimal
         return hex_data
