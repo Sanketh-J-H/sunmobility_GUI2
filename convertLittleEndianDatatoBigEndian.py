@@ -8,6 +8,6 @@ def little_to_big_endian(hex_string):
     return big_endian_hex
 
 # Example usage:
-little_endian_data = "0x21436587"
+little_endian_data = "21436587"
 big_endian_data = little_to_big_endian(little_endian_data.replace(" ", ""))
 print("Big-Endian Data:", big_endian_data)
