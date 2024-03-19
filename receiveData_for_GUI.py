@@ -32,14 +32,14 @@ class B2TServer:
         # self.network_BSSID = '60:FB:00:2E:A0:BF'
         # self.network_BSSID = '60:FB:00:2E:A0:BA'
         self.password = '12345678'
-        self.SERVER_IP = '192.168.1.12'
-        # self.SERVER_IP = '127.0.0.1'
-        self.SERVER_PORT = 8001
-        # self.SERVER_PORT = 1234
+        # self.SERVER_IP = '192.168.1.12'
+        self.SERVER_IP = '127.0.0.1'
+        # self.SERVER_PORT = 8001
+        self.SERVER_PORT = 1234
         self.index = 0
 
     def create_socket(self):
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_socket.bind((self.SERVER_IP, self.SERVER_PORT))
         self.lock = threading.Lock()  # Add a lock for thread safety
 
@@ -62,8 +62,6 @@ class B2TServer:
             print(f"Error: Failed to disconnect from Device 'wlo1'.")
 
     def receive_data_from_socket(self):
-        self.server_socket.listen()
-        conn, addr = self.server_socket.accept()
         data, _ = self.server_socket.recvfrom(13)
         hex_data = data.hex()  # Convert received data to Hexadecimal
         return hex_data
@@ -74,28 +72,45 @@ class B2TServer:
         return B2T_BMS1.copy()  # Return a copy to avoid directly exposing the internal dictionary
 
     def start_server(self):
-        # global B2T_BMS1
-        # global keys
         # self.disconnect_from_wifi()
         # self.connect_to_wifi()
         self.create_socket()
+        # self.server_socket.listen()
+        # conn, port = self.server_socket.accept()
         print("UDP server is listening...")
         while True:
-            received_data = self.receive_data_from_socket()
+            # received_data = self.receive_data_from_socket()
+            data, _ = self.server_socket.recvfrom(1024)
+            # data, _ = conn.recvfrom(1024)
+            hex_data = hex(int(data,16))
+            received_data = hex_data[2:]
             print(received_data)
 
             # Check if the received data starts with the desired prefix
             # Extract the relevant portion of the received data (after the prefix)
             if str(received_data[2:]).startswith('18ff45f3'):
-                # Mask out all but the last 64 bits
-                trimmed_data = int(received_data, 16) & 0xffffffffffffffff
+                
+                little_endian_data = received_data[10:]
+                # Split the hexadecimal string into pairs of two characters
+                pairs = [little_endian_data[i:i+2] for i in range(0, len(little_endian_data), 2)]
+                # Reverse the order of the pairs
+                pairs.reverse()
+                # Join the pairs back together to form the big-endian hexadecimal string
+                big_endian_hex = ''.join(pairs)
+                big_endian_hex = int(big_endian_hex,16)
                 # Convert hex data to binary string
-                binary_data = bin(trimmed_data)[2:].zfill(64)
+                binary_data = bin(big_endian_hex)[2:].zfill(64)
                 # Decrypt hex data into separate variables
                 decrypted_data = {}
                 for var, (start_bit, length) in B2T_BMS1.items():
                     end_bit = start_bit + length
-                    value = int(binary_data[start_bit:end_bit], 2)
+                    # Extract bits for the current variable from the binary string (in big-endian order)
+                    if start_bit == 0 :
+                        extracted_bits = binary_data[-end_bit:]
+                    else:
+                        extracted_bits = binary_data[-end_bit:-start_bit]
+                    # Convert the extracted bits to an integer value
+                    value = int(extracted_bits, 2)
 
                     if var == "B2T_TMax":
                         decrypted_data[var] = (value - 40)
@@ -127,16 +142,27 @@ class B2TServer:
 
             # Extract the relevant portion of the received data (after the prefix)
             if str(received_data[2:]).startswith('1822a1f3'):
-                # Mask out all but the last 64 bits
-                trimmed_data = int(received_data, 16) & 0xffffffffffffffff
+                little_endian_data = received_data[10:]
+                # Split the hexadecimal string into pairs of two characters
+                pairs = [little_endian_data[i:i+2] for i in range(0, len(little_endian_data), 2)]
+                # Reverse the order of the pairs
+                pairs.reverse()
+                # Join the pairs back together to form the big-endian hexadecimal string
+                big_endian_hex = ''.join(pairs)
+                big_endian_hex = int(big_endian_hex,16)
                 # Convert hex data to binary string
-                binary_data = bin(trimmed_data)[2:].zfill(64)
+                binary_data = bin(big_endian_hex)[2:].zfill(64)
                 # Decrypt hex data into separate variables
-                decrypted_data = {} 
+                decrypted_data = {}
                 for var, (start_bit, length) in B2V_BMSValue3.items():
                     end_bit = start_bit + length
-                    temp = binary_data[end_bit-8:end_bit] + binary_data[start_bit:end_bit-8]
-                    value = int(temp, 2)
+                    # Extract bits for the current variable from the binary string (in big-endian order)
+                    if start_bit == 0 :
+                        extracted_bits = binary_data[-end_bit:]
+                    else:
+                        extracted_bits = binary_data[-end_bit:-start_bit]
+                    # Convert the extracted bits to an integer value
+                    value = int(extracted_bits, 2)
 
                     if var == "B2V_Totall":
                         decrypted_data[var] = (value - 32000)*0.1
