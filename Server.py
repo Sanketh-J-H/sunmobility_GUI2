@@ -11,7 +11,7 @@ def server():
                 data ,_ = conn.recvfrom(1024)
                 if not data:
                     break
-                print(data)
+                print(hex(int(data,16)))
                 # Process received data here
                 # For demonstration, let's send the same data back
                 # conn.sendall(data)
