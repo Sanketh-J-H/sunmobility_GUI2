@@ -8,7 +8,7 @@ def server():
         with conn:
             print('Connected by', addr)
             while True:
-                data = conn.recv(1024)
+                data = conn.recv(14)
                 if not data:
                     break
                 print('Received:', data)
