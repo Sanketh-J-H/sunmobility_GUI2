@@ -9,7 +9,10 @@ def extract_variables(hex_data, variables):
         # Calculate the end bit position
         end_bit = start_bit + length
         # Extract bits for the current variable from the binary string (in big-endian order)
-        extracted_bits = binary_string[-end_bit:-start_bit]
+        if start_bit == 0 :
+            extracted_bits = binary_string[-end_bit:]
+        else:
+            extracted_bits = binary_string[-end_bit:-start_bit]
         # Convert the extracted bits to an integer value
         extracted_value = int(extracted_bits, 2)
         # Store the extracted value in the dictionary
