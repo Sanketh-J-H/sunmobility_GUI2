@@ -23,19 +23,6 @@ B2T_BMS1 = {
     "B2T_TAvg": (48, 8),
     "B2T_Life": (56, 8)
 }
-# B2T_BMS1 = {
-#     "B2T_TMax": (56, 8),
-#     "B2T_Tmin": (48, 8),
-#     "B2T_ScBatU_H": (40, 8),
-#     "B2T_ScBatU_L": (32, 8),
-#     "B2T_Mode": (31, 1),
-#     "B2T_TMSWorkMode": (28, 1),
-#     "B2T_BMUWorkMode": (25, 3),
-#     "B2T_HighVCtrl": (24, 1),
-#     "B2T_TargetT": (16, 8),
-#     "B2T_TAvg": (8, 8),
-#     "B2T_Life": (0, 8)
-# }
 
 
 class B2TServer:
@@ -46,11 +33,13 @@ class B2TServer:
         # self.network_BSSID = '60:FB:00:2E:A0:BA'
         self.password = '12345678'
         self.SERVER_IP = '192.168.1.12'
+        # self.SERVER_IP = '127.0.0.1'
         self.SERVER_PORT = 8001
+        # self.SERVER_PORT = 1234
         self.index = 0
 
     def create_socket(self):
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.SERVER_IP, self.SERVER_PORT))
         self.lock = threading.Lock()  # Add a lock for thread safety
 
@@ -83,10 +72,10 @@ class B2TServer:
         return B2T_BMS1.copy()  # Return a copy to avoid directly exposing the internal dictionary
 
     def start_server(self):
-        global B2T_BMS1
-        global keys
-        self.disconnect_from_wifi()
-        self.connect_to_wifi()
+        # global B2T_BMS1
+        # global keys
+        # self.disconnect_from_wifi()
+        # self.connect_to_wifi()
         self.create_socket()
         print("UDP server is listening...")
         while True:

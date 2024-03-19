@@ -2,7 +2,7 @@ def extract_variables(hex_data, variables):
     # Convert hexadecimal data to integer
     hex_int = int(hex_data, 16)
     # Convert integer to binary string, remove the '0b' prefix, and pad zeros to ensure 32 bits
-    binary_string = bin(hex_int)[2:].zfill(32)
+    binary_string = bin(hex_int)[2:].zfill(64)
 
     extracted_values = {}
     for variable, (start_bit, length) in variables.items():
@@ -33,7 +33,7 @@ B2T_BMS1 = {
 }
 
 # Example usage:
-big_endian_data = "0x12345678"
+big_endian_data = "1234567887654321"
 extracted_values = extract_variables(big_endian_data, B2T_BMS1)
 
 # Print the extracted values
